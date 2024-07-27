@@ -1,0 +1,52 @@
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+//MenuPage class extends JFrame and implements ActionListener 
+public class MenuPage extends JFrame implements ActionListener {
+    JButton productButton, inventoryButton, supplierButton;
+
+    //constructor
+    public MenuPage() {
+        setTitle("Cookielicious Menu");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        //create and configure GridLayout
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 1));
+
+        //create buttons for menu option
+        productButton = new JButton("Select Products");
+        inventoryButton = new JButton("Inventory Management");
+        supplierButton = new JButton("Supplier Management");
+
+        //add ActionListener to buttons
+        productButton.addActionListener(this);
+        inventoryButton.addActionListener(this);
+        supplierButton.addActionListener(this);
+
+        //add buttons to panel
+        panel.add(productButton);
+        panel.add(inventoryButton);
+        panel.add(supplierButton);
+
+        add(panel);
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == productButton) {
+            dispose();
+            new ProductSelection();
+        } else if (e.getSource() == inventoryButton) {
+            dispose();
+            new InventoryManagement();
+        } else if (e.getSource() == supplierButton) {
+            dispose();
+            new SupplierManagement();
+        }
+    }
+}
