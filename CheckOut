@@ -1,0 +1,52 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.ArrayList;
+
+//checkout class implements ActionListener
+public class Checkout extends JFrame {
+    private ArrayList<Product> cart;
+    private double totalPrice;
+
+    //constructor
+    public Checkout(ArrayList<Product> cart) {
+        this.cart = cart;
+        this.totalPrice = calculateTotalPrice();
+
+        setTitle("Checkout");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JTextArea receiptTextArea = new JTextArea();
+        receiptTextArea.setEditable(false);
+        receiptTextArea.setFont(new Font("Arial", Font.PLAIN, 16));
+        panel.add(receiptTextArea, BorderLayout.CENTER);
+
+        StringBuilder receipt = new StringBuilder();
+        for (Product product : cart) {
+            receipt.append(product.name).append(" - ").append(product.quantity).append(" pcs - RM ").append(product.price * product.quantity).append("\n");
+        }
+        receipt.append("\nTotal Price: RM ").append(totalPrice).append("\n\n");
+        receipt.append("Thank you for your purchase!\nEnjoy your cookies!");
+        receiptTextArea.setText(receipt.toString());
+
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> dispose());
+        panel.add(closeButton, BorderLayout.SOUTH);
+
+        add(panel);
+        setVisible(true);
+    }
+
+    private double calculateTotalPrice() {
+        double total = 0;
+        for (Product product : cart) {
+            total += product.price * product.quantity;
+        }
+        return total;
+    }
+} 
