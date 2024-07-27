@@ -1,0 +1,167 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+ // ProductSelection class implements ActionListener
+public class ProductSelection implements ActionListener {
+    private JFrame frame;
+    private JComboBox<String> productBox;
+    private JTextField quantityField;
+    private JButton btnAdd, btnNext;
+    private JTextArea cartArea;
+    private JLabel availableQuantityLabel;
+    private ArrayList<Product> cart;
+    private HashMap<String, Integer> inventory;
+
+   //constructor
+    public ProductSelection() {
+       //list of products
+        String[] products = {
+            "Chocolate Chip Cookie", "Oatmeal Raisin Cookie", "Peanut Butter Cookie", 
+            "Snickerdoodle Cookie", "Sugar Cookie", "Gingerbread Cookie", 
+            "Double Chocolate Cookie", "Shortbread Cookie", "Macadamia Nut Cookie"
+        };
+
+        //initialize inventory with quantity
+        inventory = new HashMap<>();
+        inventory.put("Chocolate Chip Cookie", 50);
+        inventory.put("Oatmeal Raisin Cookie", 30);
+        inventory.put("Peanut Butter Cookie", 40);
+        inventory.put("Snickerdoodle Cookie", 25);
+        inventory.put("Sugar Cookie", 60);
+        inventory.put("Gingerbread Cookie", 20);
+        inventory.put("Double Chocolate Cookie", 35);
+        inventory.put("Shortbread Cookie", 45);
+        inventory.put("Macadamia Nut Cookie", 50);
+
+        //create and configure components
+        productBox = new JComboBox<>(products);
+        quantityField = new JTextField(5);
+
+        JPanel panelProduct = new JPanel();
+        panelProduct.setLayout(new GridLayout(1, 0));
+        panelProduct.setBounds(0, 0, 500, 50);
+        panelProduct.setBorder(BorderFactory.createTitledBorder("Choose PRODUCT"));
+        panelProduct.add(productBox);
+
+        JPanel panelQuantity = new JPanel();
+        panelQuantity.setLayout(new GridLayout(1, 0));
+        panelQuantity.setBounds(0, 50, 500, 50);
+        panelQuantity.setBorder(BorderFactory.createTitledBorder("Enter QUANTITY"));
+        panelQuantity.add(new JLabel("Quantity:"));
+        panelQuantity.add(quantityField);
+
+        btnAdd = new JButton("ADD TO CART");
+        btnAdd.setBounds(100, 300, 150, 40);
+        btnNext = new JButton("CHECKOUT");
+        btnNext.setBounds(260, 300, 150, 40);
+
+        cartArea = new JTextArea();
+        cartArea.setBounds(0, 100, 500, 140);
+        cartArea.setEditable(false);
+        cartArea.setBorder(BorderFactory.createTitledBorder("Cart"));
+
+        availableQuantityLabel = new JLabel();
+        availableQuantityLabel.setBounds(0, 250, 500, 30);
+        availableQuantityLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        availableQuantityLabel.setBorder(BorderFactory.createTitledBorder("Available Quantity"));
+
+        cart = new ArrayList<>();
+
+        //create and configure frame
+        frame = new JFrame();
+        frame.setSize(520, 400);
+        frame.setLayout(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        frame.add(panelProduct);
+        frame.add(panelQuantity);
+        frame.add(cartArea);
+        frame.add(availableQuantityLabel);
+        frame.add(btnAdd);
+        frame.add(btnNext);
+
+        btnAdd.addActionListener(this);
+        btnNext.addActionListener(this);
+        productBox.addActionListener(this);
+
+        updateAvailableQuantity();
+    }
+
+    //handle button click and combo box selection
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnAdd) {
+            String product = productBox.getSelectedItem().toString();
+            int quantity = Integer.parseInt(quantityField.getText());
+            int availableQuantity = inventory.get(product);
+
+            //check availability of quantity
+            if (quantity <= availableQuantity) {
+                double price = getPrice(product);
+                cart.add(new Product(product, quantity, price));
+                inventory.put(product, availableQuantity - quantity);
+                updateCartArea();
+                updateAvailableQuantity();
+                quantityField.setText("");
+            } else {
+                 //show error message if quantity exceeds stock
+                JOptionPane.showMessageDialog(frame, "Quantity exceeds available stock.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (e.getSource() == btnNext) {
+            frame.dispose();
+            new Checkout(cart);
+        } else if (e.getSource() == productBox) {
+            updateAvailableQuantity();
+        }
+    }
+
+    //get the product price
+    private double getPrice(String product) {
+        switch (product) {
+            case "Chocolate Chip Cookie": return 12.50;
+            case "Oatmeal Raisin Cookie": return 11.00;
+            case "Peanut Butter Cookie": return 14.00;
+            case "Snickerdoodle Cookie": return 11.50;
+            case "Sugar Cookie": return 12.00;
+            case "Gingerbread Cookie": return 13.50;
+            case "Double Chocolate Cookie": return 15.00;
+            case "Shortbread Cookie": return 10.50;
+            case "Macadamia Nut Cookie": return 10.00;
+            default: return 0.00;
+        }
+    }
+
+    //update cart display
+    private void updateCartArea() {
+        StringBuilder sb = new StringBuilder();
+        for (Product product : cart) {
+            sb.append(product.name).append(" - ").append(product.quantity).append(" pcs - RM ").append(product.price * product.quantity).append("\n");
+        }
+        cartArea.setText(sb.toString());
+    }
+
+    //update available quantity label by the selected product
+    private void updateAvailableQuantity() {
+        String product = productBox.getSelectedItem().toString();
+        int availableQuantity = inventory.get(product);
+        availableQuantityLabel.setText(product + " available: " + availableQuantity);
+    }
+}
+
+//Product class that hold product details
+class Product {
+    String name;
+    int quantity;
+    double price;
+
+    //constructor for Product
+    public Product(String name, int quantity, double price) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+    }
+}
