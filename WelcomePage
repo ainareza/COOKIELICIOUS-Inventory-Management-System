@@ -1,0 +1,56 @@
+/*
+Purpose: to create an efficient inventory management system called CIMS
+Programmer: amin sofuan
+Date: 26 July 2024
+*/
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+// WelcomePage class extends JFrame and implements ActionListener
+public class WelcomePage extends JFrame implements ActionListener {
+    JButton startButton;
+
+//constructor of WelcomePage
+    public WelcomePage() {
+        
+        //set frame title, size, center location and default close operation
+        setTitle("Welcome to Cookielicious");
+        setSize(500, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        //load and display logo
+        ImageIcon logo = new ImageIcon("cookie-logo.jpg");
+        JLabel logoLabel = new JLabel(logo, SwingConstants.CENTER);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JLabel label = new JLabel("Welcome to Cookielicious", SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 20));
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(logoLabel, BorderLayout.CENTER);
+
+        //create and add start button
+        startButton = new JButton("Start");
+        startButton.addActionListener(this);
+        panel.add(startButton, BorderLayout.SOUTH);
+
+        add(panel);
+        setVisible(true);
+    }
+
+    //handle button clicks events
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == startButton) {
+            dispose();
+            new MenuPage();
+        }
+    }
+
+    public static void main(String[] args) {
+        new WelcomePage();
+    }
+}
+
