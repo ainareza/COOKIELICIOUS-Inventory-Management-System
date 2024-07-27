@@ -1,0 +1,85 @@
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+public class SupplierManagement extends JFrame implements ActionListener {
+    private JTable supplierTable;
+    private DefaultTableModel tableModel;
+    private JButton addButton, updateButton, deleteButton;
+    private JTextField nameField, contactField;
+    private JButton btnReturn;
+    
+    public SupplierManagement() {
+        setTitle("Cookielicious Supplier Management");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        String[] columns = {"Supplier Name", "Contact Information"};
+        Object[][] data = {
+            {"Amin", "011-332-7890"},
+            {"Aina", "011-654-3210"}
+        };
+        tableModel = new DefaultTableModel(data, columns);
+        supplierTable = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(supplierTable);
+        add(scrollPane, BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(2, 2));
+        inputPanel.add(new JLabel("Supplier Name:"));
+        nameField = new JTextField();
+        inputPanel.add(nameField);
+        inputPanel.add(new JLabel("Contact Information:"));
+        contactField = new JTextField();
+        inputPanel.add(contactField);
+
+        add(inputPanel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        addButton = new JButton("Add");
+        updateButton = new JButton("Update");
+        deleteButton = new JButton("Delete");
+        btnReturn = new JButton("RETURN");
+        
+        buttonPanel.add(addButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(btnReturn);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        addButton.addActionListener(this);
+        updateButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+        btnReturn.addActionListener(this);
+        
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == addButton) {
+            String name = nameField.getText();
+            String contact = contactField.getText();
+            tableModel.addRow(new Object[]{name, contact});
+        } else if (e.getSource() == updateButton) {
+            int selectedRow = supplierTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                tableModel.setValueAt(nameField.getText(), selectedRow, 0);
+                tableModel.setValueAt(contactField.getText(), selectedRow, 1);
+            }
+        } else if (e.getSource() == deleteButton) {
+            int selectedRow = supplierTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                tableModel.removeRow(selectedRow);
+            }
+        } else if (e.getSource() == btnReturn) {
+            dispose();
+            new MenuPage();
+        }
+    }
+}
+
